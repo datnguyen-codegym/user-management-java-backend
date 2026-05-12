@@ -13,7 +13,7 @@ public class UserController implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
-        if (!path.startsWith("/users")) {
+        if (!path.startsWith("/user")) {
             return;
         }
 
