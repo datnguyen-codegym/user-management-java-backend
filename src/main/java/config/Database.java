@@ -8,26 +8,21 @@ import java.sql.SQLException;
 
 public class Database {
 
-    private static final String URL =
+    public static final String URL =
             "jdbc:h2:~/testdb";
 
-    private static Connection connection;
-
     public static void init() throws SQLException {
-
-        connection = DriverManager.getConnection(
-                URL,
-                "sa",
-                ""
-        );
-
         Server.createWebServer(
                 "-web",
                 "-webPort",
                 "8082").start();
     }
 
-    public static Connection getConnection() {
-        return connection;
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(
+                URL,
+                "sa",
+                ""
+        );
     }
 }

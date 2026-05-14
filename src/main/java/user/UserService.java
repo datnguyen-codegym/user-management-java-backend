@@ -7,7 +7,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
- class UserService implements Service<User> {
+public class UserService implements Service<User> {
+
+    private static UserRepo repo = UserRepo.getInstance();
     private UserService(){}
     private static UserService INSTANCE;
     public static synchronized UserService getInstance() {
@@ -42,6 +44,6 @@ import java.util.Optional;
 
     @Override
     public User create(User obj) {
-        return null;
+        return repo.create(obj);
     }
 }

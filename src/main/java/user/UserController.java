@@ -1,24 +1,34 @@
 package user;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 public class UserController implements HttpHandler {
-    private UserService userService;
+    private static UserService userService = new UserService();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
+        String method = exchange.getRequestMethod();
         if (!path.startsWith("/user")) {
             return;
         }
+        String response = "";
+        if (path.startsWith("/user/create") && "POST".equalsIgnoreCase(method)) {
+            InputStream is = exchange.getRequestBody();
+            ObjectMapper mapper = new ObjectMapper();
 
-        String response = null;
+            User user = mapper.readValue(is, User.class);
+            user = createUser(user);
+            response = mapper.writeValueAsString(user);
+        }
 
-        response = this.getUsers();
+//        response = this.getUsers();
 
 
         // ===== CORS =====
@@ -43,5 +53,9 @@ public class UserController implements HttpHandler {
 
     private String getUsers() {
         return "list users";
+    }
+
+    private User createUser(User user) {
+        return userService.create(user);
     }
 }
