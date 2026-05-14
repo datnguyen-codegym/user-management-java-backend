@@ -42,8 +42,8 @@ public class UserRepo implements Repo<User> {
     @Override
     public User create(User obj) {
         String sql =
-                "INSERT INTO users(id, full_name, year_of_birth, user_name, email, password) " +
-                        " VALUES(?, ?, ?, ?, ?, ?)";
+                "INSERT INTO users(full_name, year_of_birth, username, email, password) " +
+                        " VALUES(?, ?, ?, ?, ?)";
 
         try (Connection connection = Database.getConnection()) {
 
@@ -54,14 +54,19 @@ public class UserRepo implements Repo<User> {
                                  sql,
                                  Statement.RETURN_GENERATED_KEYS
                          )) {
-                ps.setLong(1, obj.getId());
-                ps.setString(2, obj.getFullName());
-                ps.setInt(3, obj.getYearOfBirth());
-                ps.setString(4, obj.getUsername());
-                ps.setString(5, obj.getEmail());
-                ps.setString(6, obj.getPassword());
+                ps.setString(1, obj.getFullName());
+                ps.setInt(2, obj.getYearOfBirth());
+                ps.setString(3, obj.getUsername());
+                ps.setString(4, obj.getEmail());
+                ps.setString(5, obj.getPassword());
 
-                ps.executeQuery();
+                ps.executeUpdate();
+
+                ResultSet rs = ps.getGeneratedKeys();
+
+                if (rs.next()) {
+                    obj.setId(rs.getLong(1));
+                }
 
                 connection.commit();
 
