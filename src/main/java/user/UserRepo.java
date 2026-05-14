@@ -6,9 +6,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepo implements Repo<User> {
+ class UserRepo implements Repo<User> {
     @Override
     public Collection<User> list() {
+        User x = new User();
+//        x.get
         return List.of();
     }
 

@@ -1,12 +1,13 @@
 package user;
 
 import core.Service;
+import user.dto.UserDto;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class UserService implements Service<User> {
+ class UserService implements Service<User> {
     private UserService(){}
     private static UserService INSTANCE;
     public static synchronized UserService getInstance() {
@@ -18,6 +19,9 @@ public class UserService implements Service<User> {
 
     @Override
     public Collection<User> list() {
+//        UserDto x = new UserDto();
+        UserDto y = new UserDto();
+        UserDto.CountUser z = y.countUser;
         return List.of();
     }
 
