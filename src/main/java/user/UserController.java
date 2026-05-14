@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class UserController implements HttpHandler {
-    private static UserService userService = new UserService();
+    private static UserService userService = UserService.getInstance();
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {

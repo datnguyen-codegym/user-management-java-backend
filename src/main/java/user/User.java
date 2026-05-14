@@ -4,7 +4,7 @@ import core.BaseEntity;
 
 public class User extends BaseEntity {
     private String fullName;
-    private int year;
+    private int yearOfBirth;
     private String username;
     private String email;
     private String password;
@@ -17,12 +17,12 @@ public class User extends BaseEntity {
         this.fullName = fullName;
     }
 
-    public int getYear() {
-        return year;
+    public int getYearOfBirth() {
+        return yearOfBirth;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setYearOfBirth(int yearOfBirth) {
+        this.yearOfBirth = yearOfBirth;
     }
 
     public String getUsername() {
