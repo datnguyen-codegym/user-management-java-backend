@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepo implements Repo<User> {
+public class UserRepo implements Repo<User, Long> {
     private UserRepo(){}
     private static UserRepo INSTANCE;
     public static synchronized UserRepo getInstance() {
@@ -25,8 +25,37 @@ public class UserRepo implements Repo<User> {
     }
 
     @Override
-    public Optional<User> findById() {
-        return Optional.empty();
+    public Optional<User> findById(Long id) {
+
+        String sql = "SELECT * FROM users WHERE id = ?";
+
+        try (Connection connection = Database.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setLong(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+
+                User user = new User();
+
+                user.setId(rs.getLong("id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setYearOfBirth(rs.getInt("year_of_birth"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+
+                return Optional.of(user);
+            }
+
+            return Optional.empty();
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

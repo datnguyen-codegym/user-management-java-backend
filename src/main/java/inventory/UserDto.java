@@ -1,4 +1,0 @@
-package inventory;
-
-class UserDto {
-}

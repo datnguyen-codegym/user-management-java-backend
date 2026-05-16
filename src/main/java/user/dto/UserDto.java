@@ -1,23 +1,50 @@
 package user.dto;
 
-public class UserDto extends BaseUserDto {
-    public int age;
-    public CountUser countUser = new CountUser();
+public class UserDto {
+    private Long id;
+    private String fullName;
+    private Integer yearOfBirth;
+    private String username;
+    private String email;
 
-    public String getUserId() {
-        return "super.getUserId();";
+
+    public Long getId() {
+        return id;
     }
 
-    public String getClassName() {
-        return super.className;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public static class CountUser{
-        int userCount;
-        public void doSth() {
-
-        }
-
+    public String getFullName() {
+        return fullName;
     }
 
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public Integer getYearOfBirth() {
+        return yearOfBirth;
+    }
+
+    public void setYearOfBirth(Integer yearOfBirth) {
+        this.yearOfBirth = yearOfBirth;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
