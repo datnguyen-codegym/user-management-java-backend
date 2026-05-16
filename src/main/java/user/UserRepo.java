@@ -4,6 +4,7 @@ import config.Database;
 import core.Repo;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +20,34 @@ public class UserRepo implements Repo<User, Long> {
     }
     @Override
     public Collection<User> list() {
-        User x = new User();
-//        x.get
-        return List.of();
+
+        String sql = "SELECT * FROM users";
+
+        try (Connection connection = Database.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            List<User> users = new ArrayList<>();
+
+            while (rs.next()) {
+
+                User user = new User();
+
+                user.setId(rs.getLong("id"));
+                user.setFullName(rs.getString("full_name"));
+                user.setYearOfBirth(rs.getInt("year_of_birth"));
+                user.setUsername(rs.getString("username"));
+                user.setEmail(rs.getString("email"));
+
+                users.add(user);
+            }
+
+            return users;
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

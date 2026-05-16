@@ -24,7 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Collection<UserDto> list() {
-        return List.of();
+        return repo.list().stream().map(UserMapper.INSTANCE::toUserDto)
+                .toList();
     }
 
     @Override

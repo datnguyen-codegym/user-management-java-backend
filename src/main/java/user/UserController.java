@@ -9,8 +9,7 @@ import user.dto.UserDto;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UserController implements HttpHandler {
@@ -34,26 +33,28 @@ public class UserController implements HttpHandler {
 
         if (path.startsWith("/user") && "GET".equals(method)) {
             String query = exchange.getRequestURI().getQuery();
-            Map<String, String> params = Arrays.stream(query.split("&"))
-                    .map(param -> param.split("="))
-                    .collect(Collectors.toMap(
-                            arr -> arr[0],
-                            arr -> arr[1]
-                    ));
-
-            Long userId = Long.parseLong(params.get("id"));
-            UserDto user = findById(userId);
-            response = Mapper.INSTANCE.writeValueAsString(user);
+            if (Objects.isNull(query)) {
+                Collection<UserDto> users = getAllUsers();
+                response = Mapper.INSTANCE.writeValueAsString(users);
+            } else {
+                Map<String, String> params = Arrays.stream(query.split("&"))
+                        .map(param -> param.split("="))
+                        .collect(Collectors.toMap(
+                                arr -> arr[0],
+                                arr -> arr[1]
+                        ));
+                Long userId = Long.parseLong(params.get("id"));
+                UserDto user = findById(userId);
+                response = Mapper.INSTANCE.writeValueAsString(user);
+            }
         }
-
-//        response = this.getUsers();
 
 
         // ===== CORS =====
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
         exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
+        exchange.getResponseHeaders().set("Content-Type", "application/json");
         // Safari hay gửi OPTIONS preflight
         if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
             exchange.sendResponseHeaders(204, -1);
@@ -69,6 +70,10 @@ public class UserController implements HttpHandler {
         os.close();
     }
 
+    private Collection<UserDto> getAllUsers() {
+        return userServiceImpl.list();
+    }
+
     private String getUsers() {
         return "list users";
     }
@@ -78,7 +83,7 @@ public class UserController implements HttpHandler {
     }
 
     private UserDto findById(Long userId) {
-         return userServiceImpl.findById(userId)
-                 .orElseThrow(() -> new ApplicationException(100, "User not found"));
+        return userServiceImpl.findById(userId)
+                .orElseThrow(() -> new ApplicationException(100, "User not found"));
     }
 }
