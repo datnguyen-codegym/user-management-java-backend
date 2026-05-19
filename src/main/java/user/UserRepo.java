@@ -1,7 +1,7 @@
 package user;
 
 import config.Database;
-import core.Repo;
+import core.BaseRepo;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepo implements Repo<User, Long> {
+public class UserRepo extends BaseRepo<User, Long> {
     private UserRepo(){}
     private static UserRepo INSTANCE;
     public static synchronized UserRepo getInstance() {
