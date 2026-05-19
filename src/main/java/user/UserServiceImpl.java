@@ -5,6 +5,7 @@ import user.dto.UserDto;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
 
@@ -25,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Collection<UserDto> list() {
         return repo.list().stream().map(UserMapper.INSTANCE::toUserDto)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override
