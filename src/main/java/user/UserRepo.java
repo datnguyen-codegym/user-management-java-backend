@@ -1,142 +1,48 @@
 package user;
 
-import config.Database;
 import core.BaseRepo;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public class UserRepo extends BaseRepo<User, Long> {
-    private UserRepo(){}
+
+    private final static List<String> ORDER_INSERT_DB = List.of(
+            "full_name",
+            "year_of_birth",
+            "username",
+            "email",
+            "password"
+    );
+    public UserRepo(String TABLE) {
+        super(TABLE, ORDER_INSERT_DB);
+    }
+
     private static UserRepo INSTANCE;
     public static synchronized UserRepo getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new UserRepo();
+            INSTANCE = new UserRepo("USERS");
         }
         return INSTANCE;
     }
+
     @Override
-    public Collection<User> list() {
-
-        String sql = "SELECT * FROM users";
-
-        try (Connection connection = Database.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            List<User> users = new ArrayList<>();
-
-            while (rs.next()) {
-
-                User user = new User();
-
-                user.setId(rs.getLong("id"));
-                user.setFullName(rs.getString("full_name"));
-                user.setYearOfBirth(rs.getInt("year_of_birth"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-
-                users.add(user);
-            }
-
-            return users;
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-        }
+    protected User mappingFromDatabase(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setFullName(rs.getString("full_name"));
+        user.setYearOfBirth(rs.getInt("year_of_birth"));
+        user.setUsername(rs.getString("username"));
+        user.setEmail(rs.getString("email"));
+        return user;
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-
-        String sql = "SELECT * FROM users WHERE id = ?";
-
-        try (Connection connection = Database.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql)) {
-
-            ps.setLong(1, id);
-
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-
-                User user = new User();
-
-                user.setId(rs.getLong("id"));
-                user.setFullName(rs.getString("full_name"));
-                user.setYearOfBirth(rs.getInt("year_of_birth"));
-                user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
-                user.setPassword(rs.getString("password"));
-
-                return Optional.of(user);
-            }
-
-            return Optional.empty();
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void delete(Long id) {
-
-    }
-
-    @Override
-    public User update(User obj) {
-        return null;
-    }
-
-    @Override
-    public User create(User obj) {
-        String sql =
-                "INSERT INTO users(full_name, year_of_birth, username, email, password) " +
-                        " VALUES(?, ?, ?, ?, ?)";
-
-        try (Connection connection = Database.getConnection()) {
-
-            connection.setAutoCommit(false);
-
-            try (PreparedStatement ps =
-                         connection.prepareStatement(
-                                 sql,
-                                 Statement.RETURN_GENERATED_KEYS
-                         )) {
-                ps.setString(1, obj.getFullName());
-                ps.setInt(2, obj.getYearOfBirth());
-                ps.setString(3, obj.getUsername());
-                ps.setString(4, obj.getEmail());
-                ps.setString(5, obj.getPassword());
-
-                ps.executeUpdate();
-
-                ResultSet rs = ps.getGeneratedKeys();
-
-                if (rs.next()) {
-                    obj.setId(rs.getLong(1));
-                }
-
-                connection.commit();
-
-                return obj;
-
-            } catch (Exception e) {
-
-                connection.rollback();
-
-                throw e;
-            }
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(e);
-        }
+    protected void mappingFromEntity(PreparedStatement ps, User entity) throws SQLException {
+        ps.setString(1, entity.getFullName());
+        ps.setInt(2, entity.getYearOfBirth());
+        ps.setString(3, entity.getUsername());
+        ps.setString(4, entity.getEmail());
+        ps.setString(5, entity.getPassword());
     }
 }
